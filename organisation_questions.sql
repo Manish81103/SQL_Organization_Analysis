@@ -8,7 +8,7 @@ join
 employees_dept ed
 on m.manager_id = ed.manager_id;
 
-/*Q2.Get the department name of all employees whose salary is above 40000*/
+/*Q2.Get the department name of all employees whose salary is above 40,000*/
 
 select ed.emp_id,dp.dept_name,ed.salary
 from employees_dept ed
@@ -106,7 +106,7 @@ on pd.project_id = pj.project_id
 where pj.project_name = 'AI integration';
 
 /*Q11.Get emp_id,first name ,salary,departmenet name of all the team leads associated with the project
-of either Data Analytics */
+of Data Analytics */
 
 select ei.emp_id,ei.firstname,ed.salary,pd.project_lead_id,dp.dept_name
 from employees_info ei
@@ -164,10 +164,28 @@ order by count(pj.project_name) desc
 limit 2;
 
 
-/*Q15.Get the count and name of all projects with there project status: */
+/*Q15.Get the count and name of all projects with their project status */
 
 select pj.project_name,pd.project_status,count(pd.project_status)
 from project_details pd
 join projects pj
 on pd.project_id = pj.project_id
 group by pj.project_name,pd.project_status;
+
+
+/*Q16.Make a store procedure for inserting the information of new employees */
+
+delimiter $$
+create procedure P_insert_emp_info(IN id int, IN firstname varchar(20), IN lastname varchar(20) , IN email varchar(30))
+begin
+insert into employees_info(emp_id , firstname , lastname , email)
+values(id , firstname , lastname , email);
+
+select * from employees_info
+where emp_id = id;
+end $$
+delimiter ; 
+
+call P_insert_emp_info(1251,'Krish','kumar','krish_kumar@someorg.com');
+
+
