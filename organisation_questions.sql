@@ -45,7 +45,14 @@ on ei.emp_id = t.manager_id;
 -- Q5.Get employees name , id , departmenet id , and salary of employees and categorize salary as 'Low'(<=25000), 
 -- 'Medium'(25001 - 50000) , else 'High'.
 
-
+select concat(ei.firstname,' ',ei.lastname) as name,ed.emp_id,ed.dept_id,ed.salary,
+case
+when ed.salary <= 25000 then "Low"
+when ed.salary > 25000 and ed.salary <= 50000 then "Medium"
+else "High"
+end as salary_range from employees_dept ed
+join employees_info ei
+on ei.emp_id = ed.emp_id;
 
 
 -- Q6.Get the name of all employees and if the employee is in dept 203, get their salary as well.
