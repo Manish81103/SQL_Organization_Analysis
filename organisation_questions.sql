@@ -216,9 +216,15 @@ call P_insert_emp_info(1251,'Krish','kumar','krish_kumar@someorg.com');
 -- Q18.Give ranks to every employee according to their salary by using window functions.
 
 select ei.firstname,dp.dept_name,ed.*, 
-dense_rank() over(partition by dept_id order by salary desc) as rank_
+dense_rank() over(order by salary desc) as rank_
 from employees_dept ed
 join employees_info ei on ed.emp_id = ei.emp_id
 join departments dp on ed.dept_id = dp.dept_id;
 
 
+-- Q19.get the total salary for each department and rank the salaries from highest to lowest. 
+select dp.dept_name,sum(ed.salary) as total_salary,
+dense_rank() over(order by sum(ed.salary) desc) as rank_
+from employees_dept ed 
+join departments dp on ed.dept_id = dp.dept_id
+group by 1;
