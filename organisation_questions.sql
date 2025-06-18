@@ -90,7 +90,7 @@ where pd.project_lead_id = ei.emp_id;
 
 -- Q8.Get the name of all projects whose status is completed.
 
-select pj.*,pd.project_status
+select distinct pj.project_id,pj.project_name,pd.project_status
 from projects pj
 join project_details pd on pj.project_id = pd.project_id
 where pd.project_status = 'Completed';
@@ -98,16 +98,16 @@ where pd.project_status = 'Completed';
 
 -- Q9.Get the count of all the project status.
 
-select pj.project_name,t.*
+select distinct pd.project_status,count(pd.project_status) as Number
 from projects pj
-join 
-(select  distinct project_status,count(*) from project_details 
-group by project_status) t;
+join project_details pd
+on pj.project_id = pd.project_id 
+group by 1 order by 2 desc;
 
 
 -- Q10.Get the name of the manager,the name of the project they are associated with , status of the project and name of the client.
 
-select concat(ei.firstname,' ',ei.lastname) as emp_name,m.manager_id,pj.project_name,pd.project_status,cl.client_name
+select concat(ei.firstname,' ',ei.lastname) as manager_name,pj.project_name,pd.project_status,cl.client_name
 from 
 employees_info ei
 join managers m on ei.emp_id = m.manager_id
@@ -120,9 +120,10 @@ where pd.manager_id = m.manager_id;
 
 -- Q11.Get the name and city of the client ,managaer_id and manager name who are associated with AI integration project.
 
-select cl.client_name,cl.client_city,pd.manager_id,pj.project_name
+select cl.client_name,cl.client_city,pd.manager_id,concat(ei.firstname," ",ei.lastname) as manager_name,pj.project_name
 from clients cl
 join project_details pd on cl.client_id = pd.client_id
+join employees_info ei on ei.emp_id = pd.manager_id
 join projects pj on pd.project_id = pj.project_id
 where pj.project_name = 'AI integration';
 
@@ -130,21 +131,22 @@ where pj.project_name = 'AI integration';
 
 -- Q12.Get emp_id,first name ,salary,departmenet name of all the team leads associated with the project of Data Analytics.
 
-select ei.emp_id,ei.firstname,ed.salary,pd.project_lead_id,dp.dept_name
+select ei.emp_id,ei.firstname,ed.salary,pd.project_lead_id,dp.dept_name,pj.project_name
 from employees_info ei
 join employees_dept ed on ei.emp_id = ed.emp_id
 join departments dp on dp.dept_id = ed.dept_id
 join project_details pd on pd.project_lead_id = ei.emp_id
-where dp.dept_name = 'Data Analytics';
+join projects pj on pd.project_id = pj.project_id
+where pj.project_name = 'Data Analysis';
 
 
 
 -- Q13.Get the name of all the projects initiated in november.
 
-select pj.project_name,pd.commencement_month
-from projects pj
-join project_details pd on pd.project_id = pj.project_id
-where pd.commencement_month = 'November';
+select pj.project_name,pd.project_status,pd.commencement_month
+from project_details pd
+join projects pj on pd.project_id = pj.project_id 
+where commencement_month like 'November' and pd.project_status like 'initiated';
 
 
 
